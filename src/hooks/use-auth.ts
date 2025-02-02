@@ -13,7 +13,7 @@ export const useAuthQuery = () => {
   } = useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
-      const { data } = await apiClient.get('/auth/user')
+      const { data } = await apiClient.get('/user')
       return data
     },
     retry: false, // Không tự động retry nếu request fail

@@ -1,18 +1,33 @@
-//path: src/routes/_authenticated/route.tsx
+// src/routes/_authenticated/route.tsx
+import { useEffect } from 'react'
 import Cookies from 'js-cookie'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 import { SearchProvider } from '@/context/search-context'
+import { useAuthQuery } from '@/hooks/use-auth'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/layout/app-sidebar'
 import SkipToMain from '@/components/skip-to-main'
 
-export const Route = createFileRoute('/_authenticated')({
-  component: RouteComponent,
-})
+function ProtectedRouteWithLayout() {
+  const { user, isLoading } = useAuthQuery()
+  const navigate = useNavigate()
 
-function RouteComponent() {
+  // Sử dụng useEffect để chuyển hướng sau khi render nếu không có user
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate({ to: '/sign-in' })
+    }
+  }, [isLoading, user, navigate])
+
+  // Trong khi chờ xác thực hoặc đang chuyển hướng, hiển thị loading state
+  if (isLoading || (!user && !isLoading)) {
+    return <div>Loading...</div>
+  }
+
+  // Lấy trạng thái mở sidebar từ cookie
   const defaultOpen = Cookies.get('sidebar:state') !== 'false'
+
   return (
     <SearchProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
@@ -30,9 +45,14 @@ function RouteComponent() {
             'group-data-[scroll-locked=1]/body:has-[main.fixed-main]:h-svh'
           )}
         >
+          {/* Các route con sẽ được render tại đây */}
           <Outlet />
         </div>
       </SidebarProvider>
     </SearchProvider>
   )
 }
+
+export const Route = createFileRoute('/_authenticated')({
+  component: ProtectedRouteWithLayout,
+})
