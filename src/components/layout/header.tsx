@@ -1,3 +1,4 @@
+//path: src/components/layout/header.tsx
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { Separator } from '@/components/ui/separator'

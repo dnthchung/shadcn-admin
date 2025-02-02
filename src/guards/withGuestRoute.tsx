@@ -1,3 +1,4 @@
+// @refresh reset
 import React, { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useAuthQuery } from '@/hooks/use-auth'

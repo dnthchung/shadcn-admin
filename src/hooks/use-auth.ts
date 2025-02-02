@@ -1,9 +1,11 @@
 //path : src/hooks/use-auth.ts
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import apiClient from '@/lib/apiClient'
+import { useNavigate } from '@tanstack/react-router'
+import apiClient from '@/lib/api-client'
 
 export const useAuthQuery = () => {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   // Fetch user từ API `/auth/user`
   const {
@@ -22,9 +24,13 @@ export const useAuthQuery = () => {
 
   // Hàm logout → Gọi API và xóa cache user
   const logout = async () => {
-    await apiClient.get('/auth/logout')
-    queryClient.setQueryData(['authUser'], null) // Xóa cache user
-    window.location.href = '/login'
+    try {
+      await apiClient.get('/auth/logout')
+      queryClient.setQueryData(['authUser'], null) // Xóa cache user
+      navigate({ to: '/sign-in' })
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
   }
 
   return { user, isLoading, isError, logout }

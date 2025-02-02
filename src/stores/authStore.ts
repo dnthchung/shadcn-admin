@@ -50,7 +50,7 @@
 // })
 // // export const useAuth = () => useAuthStore((state) => state.auth)
 import { create } from 'zustand'
-import apiClient from '@/lib/apiClient'
+import apiClient from '@/lib/api-client'
 
 interface AuthUser {
   accountNo: string
